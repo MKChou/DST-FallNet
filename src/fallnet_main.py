@@ -19,9 +19,9 @@ CHANNELS = 1
 FUSION_THRESHOLD = 0.5
 CNN_CONFIDENCE_THRESHOLD = 0.8
 CAMERA_ID = 0
-CNN_MODEL_PATH = "FallFusion-CNN.onnx"
+CNN_MODEL_PATH = "P_CNN.onnx"
 ABNORMAL_IMAGE_PATH = "./abnormal_images/"
-GPIO_PIN = 8
+GPIO_PIN = 40
 GPIO_OUTPUT_PIN = 38
 
 CNN_LABELS = {
@@ -176,7 +176,7 @@ def extract_mfcc(waveform):
 
 def audio_thread_fn(audio_result_holder, stop_event):
     try:
-        session = ort.InferenceSession("FallFusion-Audio.onnx", providers=["CPUExecutionProvider"])
+        session = ort.InferenceSession("S_LSTM.onnx", providers=["CPUExecutionProvider"])
         input_name = session.get_inputs()[0].name
         output_name = session.get_outputs()[0].name
     except Exception as e:
@@ -236,10 +236,10 @@ def visual_thread_fn(visual_result_holder, keypoints_holder, stop_event):
             }),
             'CPUExecutionProvider'
         ]
-        session = ort.InferenceSession("FallFusion-Pose.onnx", providers=providers)
+        session = ort.InferenceSession("MoveNet_int8.onnx", providers=providers)
     except Exception as e:
         print(f"Visual model loading failed: {str(e)}")
-        session = ort.InferenceSession("FallFusion-Pose.onnx", providers=['CPUExecutionProvider'])
+        session = ort.InferenceSession("MoveNet_int8.onnx", providers=['CPUExecutionProvider'])
 
     input_name = session.get_inputs()[0].name
     frame_times = deque(maxlen=30)
@@ -641,7 +641,7 @@ def fusion_loop(audio_result_holder, visual_result_holder, keypoints_holder, fal
 
 def gpio_monitor_thread(fall_event_log, stop_event):
     print(f"{BLUE}GPIO monitoring thread started{RESET}")
-    print(f"{BLUE}Starting to monitor PIN8 state and control PIN38 output...{RESET}")
+    print(f"{BLUE}Starting to monitor PIN40 state and control PIN38 output...{RESET}")
     
     last_clear_time = 0
     clear_cooldown = 0.5
@@ -693,7 +693,7 @@ def init_gpio():
     try:
         print(f"{BLUE}Setting GPIO mode...{RESET}")
         GPIO.setmode(GPIO.BOARD)
-        print(f"{BLUE}Configuring PIN8...{RESET}")
+        print(f"{BLUE}Configuring PIN40...{RESET}")
         GPIO.setup(GPIO_PIN, GPIO.IN)
         print(f"{BLUE}Configuring PIN38...{RESET}")
         GPIO.setup(GPIO_OUTPUT_PIN, GPIO.OUT)

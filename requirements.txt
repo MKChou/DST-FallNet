@@ -1,0 +1,8 @@
+torch
+ torchaudio
+ sounddevice
+ onnxruntime
+ opencv-python
+ numpy
+ RPi.GPIO
+ psutil

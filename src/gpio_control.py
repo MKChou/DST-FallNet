@@ -3,7 +3,7 @@ import time
 import threading
 from utils import RED, GREEN, BLUE, YELLOW, RESET
 
-GPIO_PIN = 40
+GPIO_PIN = 8
 GPIO_OUTPUT_PIN = 38
 gpio_lock = threading.Lock()
 
@@ -11,7 +11,7 @@ def init_gpio():
     try:
         print(f"{BLUE}Setting GPIO mode...{RESET}")
         GPIO.setmode(GPIO.BOARD)
-        print(f"{BLUE}Configuring PIN40...{RESET}")
+        print(f"{BLUE}Configuring PIN8...{RESET}")
         GPIO.setup(GPIO_PIN, GPIO.IN)
         print(f"{BLUE}Configuring PIN38...{RESET}")
         GPIO.setup(GPIO_OUTPUT_PIN, GPIO.OUT)
@@ -25,7 +25,7 @@ def init_gpio():
 
 def gpio_monitor_thread(fall_event_log, stop_event):
     print(f"{BLUE}GPIO monitoring thread started{RESET}")
-    print(f"{BLUE}Starting to monitor PIN40 state and control PIN38 output...{RESET}")
+    print(f"{BLUE}Starting to monitor PIN8 state and control PIN38 output...{RESET}")
     
     last_clear_time = 0
     clear_cooldown = 0.5
