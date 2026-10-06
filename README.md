@@ -9,17 +9,30 @@ Project website: [https://www.mkchou.online/](https://www.mkchou.online/)
 - Jetson Nano 2GB
 - USB Camera
 - USB Microphone
-- LED, Buzzer (GPIO control)
+- LED, Buzzer (GPIO output, BOARD pin 38)
+- Push button to clear the alert (GPIO input, BOARD pin 8)
 
 ## Project Directory Structure
 ```
 DST-FallNet/
-├── src/                # Main source code
-├── models/             # ONNX model files
-├── assets/             # Documentation images
-├── abnormal_images/    # Abnormal images generated during runtime
-├── requirements.txt    # Python dependencies
-└── README.md           # Project documentation
+├── src/
+│   ├── main.py             # Entry point (modular version)
+│   ├── visual_module.py    # Camera capture, pose inference, pose-based fall score
+│   ├── audio_module.py     # Audio recording, MFCC extraction, LSTM inference
+│   ├── fusion.py           # Dempster-Shafer fusion
+│   ├── cnn_analysis.py     # CNN verification of abnormal frames
+│   ├── dashboard.py        # CLI dashboard
+│   ├── gpio_control.py     # Button input and alert output
+│   ├── utils.py            # Shared helpers and the models/ path
+│   └── all_in_one.py       # Entry point (single-file version of the same system)
+├── models/
+│   ├── FallFusion-Pose.onnx    # MoveNet pose estimation
+│   ├── FallFusion-Audio.onnx   # LSTM audio classifier
+│   └── FallFusion-CNN.onnx     # CNN posture classifier
+├── assets/
+│   └── CNN/                # CNN training labels (labels.csv) and result figures
+├── requirements.txt        # Python dependencies
+└── README.md               # Project documentation
 ```
 
 ## Installation
@@ -30,11 +43,18 @@ DST-FallNet/
    ```
 
 ## How to Run
-1. Enter the `src/` directory
-2. Run the main program:
-   ```bash
-   python main.py
-   ```
+Run either entry point from the repository root (model paths are resolved relative to the source files, so any working directory works):
+
+- Single-file version:
+  ```bash
+  python src/all_in_one.py
+  ```
+- Modular version:
+  ```bash
+  python src/main.py
+  ```
+
+Note: the modular version (`src/main.py`) has not yet been tested on the Jetson Nano; the version that has been tested is `src/all_in_one.py`.
 
 ## Main Features
 - Visual fall detection (MoveNet pose estimation, CNN action classification)
@@ -52,8 +72,13 @@ DST-FallNet/
 - For detailed architecture and theory, please refer to the [project website](https://www.mkchou.online/)
 
 ## Model Files
-- Please place the downloaded ONNX models in the `models/` directory.
-- For download links, refer to the [project website](https://www.mkchou.online/) or contact the author.
+The ONNX models are included in this repository under `models/`; no separate download is needed.
+
+| File | Purpose |
+|---|---|
+| `FallFusion-Pose.onnx` | MoveNet pose estimation |
+| `FallFusion-Audio.onnx` | LSTM audio anomaly detection |
+| `FallFusion-CNN.onnx` | CNN posture classification for verification |
 
 ## Example Screenshots
 ![acc_curve](assets/CNN/acc_curve.png)
@@ -69,7 +94,7 @@ DST-FallNet/
 
 ## Notes
 - Jetson Nano 2GB and correct GPIO connections are required
-- Model files (.onnx) must be placed in the `models/` directory
+- Model files (.onnx) are loaded from the `models/` directory
 - Images and temporary files generated during runtime are not recommended to be uploaded to GitHub
 
 ---

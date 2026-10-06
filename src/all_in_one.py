@@ -19,7 +19,8 @@ CHANNELS = 1
 FUSION_THRESHOLD = 0.5
 CNN_CONFIDENCE_THRESHOLD = 0.8
 CAMERA_ID = 0
-CNN_MODEL_PATH = "FallFusion-CNN.onnx"
+MODELS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "models")
+CNN_MODEL_PATH = os.path.join(MODELS_DIR, "FallFusion-CNN.onnx")
 ABNORMAL_IMAGE_PATH = "./abnormal_images/"
 GPIO_PIN = 8
 GPIO_OUTPUT_PIN = 38
@@ -176,7 +177,7 @@ def extract_mfcc(waveform):
 
 def audio_thread_fn(audio_result_holder, stop_event):
     try:
-        session = ort.InferenceSession("FallFusion-Audio.onnx", providers=["CPUExecutionProvider"])
+        session = ort.InferenceSession(os.path.join(MODELS_DIR, "FallFusion-Audio.onnx"), providers=["CPUExecutionProvider"])
         input_name = session.get_inputs()[0].name
         output_name = session.get_outputs()[0].name
     except Exception as e:
@@ -236,10 +237,10 @@ def visual_thread_fn(visual_result_holder, keypoints_holder, stop_event):
             }),
             'CPUExecutionProvider'
         ]
-        session = ort.InferenceSession("FallFusion-Pose.onnx", providers=providers)
+        session = ort.InferenceSession(os.path.join(MODELS_DIR, "FallFusion-Pose.onnx"), providers=providers)
     except Exception as e:
         print(f"Visual model loading failed: {str(e)}")
-        session = ort.InferenceSession("FallFusion-Pose.onnx", providers=['CPUExecutionProvider'])
+        session = ort.InferenceSession(os.path.join(MODELS_DIR, "FallFusion-Pose.onnx"), providers=['CPUExecutionProvider'])
 
     input_name = session.get_inputs()[0].name
     frame_times = deque(maxlen=30)

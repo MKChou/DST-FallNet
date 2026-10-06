@@ -2,9 +2,10 @@ import cv2
 import numpy as np
 import onnxruntime as ort
 import time
-from utils import clear_gpu_memory
+import os
+from utils import clear_gpu_memory, MODELS_DIR
 
-CNN_MODEL_PATH = "FallFusion-CNN.onnx"
+CNN_MODEL_PATH = os.path.join(MODELS_DIR, "FallFusion-CNN.onnx")
 CNN_CONFIDENCE_THRESHOLD = 0.8
 
 CNN_LABELS = {

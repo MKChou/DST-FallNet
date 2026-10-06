@@ -6,6 +6,8 @@ import time
 import threading
 from collections import deque
 import numpy as np
+import os
+from utils import MODELS_DIR
 
 SAMPLE_RATE = 16000
 AUDIO_DURATION = 3
@@ -42,7 +44,7 @@ def extract_mfcc(waveform):
 
 def audio_thread_fn(audio_result_holder, stop_event):
     try:
-        session = ort.InferenceSession("FallFusion-Audio.onnx", providers=["CPUExecutionProvider"])
+        session = ort.InferenceSession(os.path.join(MODELS_DIR, "FallFusion-Audio.onnx"), providers=["CPUExecutionProvider"])
         input_name = session.get_inputs()[0].name
         output_name = session.get_outputs()[0].name
     except Exception as e:

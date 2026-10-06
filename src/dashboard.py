@@ -3,6 +3,7 @@ from utils import (
     RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, RESET,
     progress_bar, create_vertical_bar
 )
+from visual_module import KEYPOINT_NAMES
 
 def dashboard_render(
     now_str, runtime_str, version_str,

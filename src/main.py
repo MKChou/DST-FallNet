@@ -1,3 +1,4 @@
+import os
 import threading
 import time
 from collections import deque
@@ -5,7 +6,7 @@ import RPi.GPIO as GPIO
 
 from utils import get_system_usage, BLUE, RED, GREEN, RESET
 from audio_module import audio_thread_fn, AUDIO_DURATION
-from visual_module import visual_thread_fn, init_camera, CAMERA_ID, KEYPOINT_NAMES
+from visual_module import visual_thread_fn, init_camera, release_camera, CAMERA_ID, KEYPOINT_NAMES
 from fusion import calculate_belief_mass, dempster_rule, calculate_conflict_coefficient
 from cnn_analysis import analyze_abnormal_image, CNN_CONFIDENCE_THRESHOLD
 from dashboard import dashboard_render
@@ -222,8 +223,7 @@ def main():
         print(f"System error: {str(e)}")
         stop_event.set()
     finally:
-        if 'camera' in globals() and camera is not None:
-            camera.release()
+        release_camera()
         GPIO.cleanup()
         print("System shutdown complete")
 

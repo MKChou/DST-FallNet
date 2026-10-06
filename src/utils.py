@@ -1,6 +1,9 @@
 import psutil
 import torch
 import gc
+import os
+
+MODELS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "models")
 
 def get_system_usage():
     try:
